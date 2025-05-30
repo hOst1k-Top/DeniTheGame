@@ -9,15 +9,65 @@ DeniGame::DeniGame(QWidget *parent)
     connect(&manager, &GameManager::gameStarted, this, &DeniGame::onGameStarted);
     connect(&manager, &GameManager::roundStarted, this, &DeniGame::onRoundStarted);
     connect(&manager, &GameManager::phaseChanged, this, &DeniGame::onPhaseChanged);
-    connect(&manager, &GameManager::correctAnswer, this, &DeniGame::onCorrectAnswer);
-    connect(&manager, &GameManager::incorrectAnswer, this, &DeniGame::onIncorrectAnswer);
+    connect(&manager, &GameManager::correctAnswer, this, &DeniGame::updateScore);
+    connect(&manager, &GameManager::incorrectAnswer, this, &DeniGame::updateScore);
     connect(&manager, &GameManager::finalRoundStarted, this, &DeniGame::onFinalRoundStarted);
+    connect(ui->pushButton, &QAbstractButton::clicked, [&]() {
+        GamePhase phase = manager.getPhase();
+        switch (phase)
+        {
+        case GamePhase::Setup:
+            manager.startGame();
+            break;
+        case GamePhase::ActiveThinking:
+        {
+            std::vector<int> picked;
+            for (int i = 0; i < ui->cardLayout->count(); ++i)
+            {
+                QLayoutItem* item = ui->cardLayout->itemAt(i);
+                if (!item) continue;
 
-    // TODO: При реализации gameFinished — подключить сигнал
-    // connect(&manager, &GameManager::gameFinished, this, &DeniGame::onGameFinished);
+                ClickableCard* card = qobject_cast<ClickableCard*>(item->widget());
+                if (!card) continue;
 
-    // Запуск игры
-    manager.startGame();
+                if (card->getState() == State::Selected) picked.push_back(card->getId());
+            }
+            manager.submitMemoryCards(picked);
+            updateMemoryField();
+            break;
+        }
+        case GamePhase::Painting:
+            manager.submitPaint();
+            break;
+        case GamePhase::Decision:
+        {
+            auto words = manager.getCurrentWords();
+            QStringList items = words.keys();
+            bool ok;
+            QString selected = QInputDialog::getItem(this, tr("Word Selector"), tr("Select easter world:"), items, 0, false, &ok);
+            if (!ok) return;
+            manager.makeDecision(words[selected]);
+            break;
+        }
+        case GamePhase::RoundEnd:
+            manager.startNextRound();
+            break;
+        case GamePhase::FinalGuess:
+        {
+            QMap<QString, int> players;
+            for (auto player : SettingsManager::getInstance()->getPlayers()) players.insert(player.name, player.id);
+            QStringList names = players.keys();
+            bool ok;
+            QString picked = QInputDialog::getItem(this, tr("Deny Picker"), tr("The Deny is:"), names, 0, false, &ok);
+            if (!ok) return;
+            manager.finalGuess(players[picked]);
+        }
+        default:
+            break;
+        }
+    });
+
+    connect(&manager, &GameManager::gameFinished, this, &DeniGame::onGameFinished);
 }
 
 DeniGame::~DeniGame()
@@ -40,45 +90,46 @@ void DeniGame::onRoundStarted(int round, const int& idea)
 
 void DeniGame::onPhaseChanged(GamePhase phase)
 {
-    // Пример адаптивного интерфейса по фазам
     switch (phase)
-    {
+    {;
     case GamePhase::ActiveThinking:
-        ui->pushButton->setText("Submit");
+        ui->pushButton->setText(tr("Submit"));
         ui->pushButton->setEnabled(true);
+        ui->MemoryField->setEnabled(false);
+        break;
+    case GamePhase::Painting:
+        ui->pushButton->setText(tr("Submit Paint"));
+        ui->pushButton->setEnabled(true);
+        ui->MemoryField->setEnabled(true);
         break;
     case GamePhase::OtherDiscuss:
-        ui->pushButton->setText("Waiting...");
+        ui->pushButton->setText(tr("Waiting..."));
         ui->pushButton->setEnabled(false);
+        ui->MemoryField->setEnabled(false);
+        break;
+    case GamePhase::Decision:
+        ui->pushButton->setText(tr("Make Decision"));
+        ui->pushButton->setEnabled(true);
+        ui->MemoryField->setEnabled(false);
         break;
     case GamePhase::RoundEnd:
         ui->pushButton->setText("Next Round");
         ui->pushButton->setEnabled(true);
+        ui->MemoryField->setEnabled(false);
         break;
     case GamePhase::FinalGuess:
-        switchToFinalPhase();
+    {
+        ui->pushButton->setText(tr("The Deny is..."));
+        ui->Title->setText(tr("Final Guessing"));
         break;
+    }
     default:
         break;
     }
 }
 
-void DeniGame::onCorrectAnswer()
-{
-    QMessageBox::information(this, tr("Answer"), tr("Correct!"));
-    updateScore();
-}
-
-void DeniGame::onIncorrectAnswer()
-{
-    QMessageBox::warning(this, tr("Answer"), tr("Incorrect!"));
-    updateScore();
-}
-
 void DeniGame::onFinalRoundStarted()
 {
-    QMessageBox::information(this, tr("Final Round"), tr("Final guessing begins."));
-    // Логика переключения на финальный режим игры
 }
 
 void DeniGame::onGameFinished(bool altersWin)
@@ -88,7 +139,16 @@ void DeniGame::onGameFinished(bool altersWin)
         : tr("Dany wins!");
 
     QMessageBox::information(this, tr("Game Over"), resultText);
-    // TODO: Дать пользователю возможность перезапуска
+    
+    QMessageBox::StandardButton reply = QMessageBox::information(this, tr("Back to menu"), tr("Continue?"), QMessageBox::StandardButton::Retry, QMessageBox::StandardButton::No);
+    if (reply == QMessageBox::No) QApplication::quit();
+    else
+    {
+        GameInitScreen* settings = new GameInitScreen();
+        close();
+        settings->show();
+        deleteLater();
+    }
 }
 
 void DeniGame::resetInterface()
@@ -107,28 +167,29 @@ void DeniGame::updateIdeaCard(const int& id)
 
 void DeniGame::updateScore()
 {
-    ui->deniScore->display(manager.getCorrectAnswers());
-    ui->alterScore->display(manager.getIncorrectAnswers());
+    ui->alterScore->display(manager.getCorrectAnswers());
+    ui->deniScore->display(manager.getIncorrectAnswers());
 }
 
 void DeniGame::updateMemoryField()
 {
     const auto& cards = manager.getActivePlayer().currentHend;
     auto labels = { ui->label_3, ui->label_4, ui->label_5, ui->label_6, ui->label_9, ui->label_7, ui->label_8 };
-    int index = 0;
+    size_t index = 0;
     for (ClickableCard* label : labels)
     {
-        if (index < static_cast<int>(cards.size()))
-            label->setPixmap(manager.getMemoryCardImage(cards[index]).scaled(256,387, Qt::KeepAspectRatio));
-        else
+        if (index < cards.size())
+        {
+            label->setPixmap(manager.getMemoryCardImage(cards[index]).scaled(240, 387, Qt::KeepAspectRatio));
+            label->setId(cards[index]);
+            label->setInteraction(true);
+        }
+        else 
+        {
             label->clear();
+            label->setInteraction(false);
+        }
+        label->resetState();
         ++index;
     }
-}
-
-void DeniGame::switchToFinalPhase()
-{
-    // Финальный этап: скрытие ненужного, выделение главного
-    ui->Title->setText(tr("Final Guessing"));
-    // Можно дополнительно скрыть элементы MemoryField и т.п.
 }

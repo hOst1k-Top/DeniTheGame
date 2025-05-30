@@ -65,6 +65,8 @@ qt6_add_translations(DeniTheGame
 )
 install(FILES ${qm_files} DESTINATION ${CMAKE_BINARY_DIR}/translations)
 
+
+
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
         WIN32_EXECUTABLE TRUE

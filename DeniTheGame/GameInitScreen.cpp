@@ -12,13 +12,14 @@ GameInitScreen::GameInitScreen(QWidget *parent)
     QObject::connect(ui->pCount, &QSpinBox::valueChanged, this, &GameInitScreen::handlePlayerCountChange);
     QObject::connect(ui->startGame, &QAbstractButton::clicked, [this]() {
         auto players = getPlayers();
-        if (players.isEmpty())
+        if (players.isEmpty() || players.size() != ui->pCount->value())
         {
             QMessageBox::warning(this, tr("Error!"), tr("Player Names is not selected"));
             return;
         }
         SettingsManager::getInstance()->setMemoryToPick(ui->memoryCards->currentData().toInt());
         SettingsManager::getInstance()->setPlayers(getPlayers());
+        SettingsManager::getInstance()->setDiscussTime(ui->discussion->value());
 
         DeniGame* game = new DeniGame();
         game->show();

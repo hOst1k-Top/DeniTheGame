@@ -1,9 +1,12 @@
 #pragma once
 
 #include <QWidget>
+#include <QMap>
+#include <QInputDialog>
 #include "../ui/ui_DeniGame.h"
 #include "GameManager.h"
 #include "ClickableCard.h"
+#include "GameInitScreen.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DeniGame; };
@@ -21,10 +24,9 @@ private slots:
     void onGameStarted();
     void onRoundStarted(int round, const int& idea);
     void onPhaseChanged(GamePhase phase);
-    void onCorrectAnswer();
-    void onIncorrectAnswer();
     void onFinalRoundStarted();
     void onGameFinished(bool altersWin);
+    void updateScore();
 
 private:
 	Ui::DeniGame *ui;
@@ -32,7 +34,5 @@ private:
 
     void resetInterface();
     void updateIdeaCard(const int& id);
-    void updateScore();
     void updateMemoryField();
-    void switchToFinalPhase();
 };

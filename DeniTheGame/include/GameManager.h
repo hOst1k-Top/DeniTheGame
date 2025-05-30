@@ -5,6 +5,7 @@
 #include <random>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QTimer>
 #include "SettingsManager.h"
 #include "CardDealler.h"
 #include "dbprovider.h"
@@ -13,6 +14,7 @@ enum class GamePhase {
     Setup,
     RoundStart,
     ActiveThinking,
+    Painting,
     OtherDiscuss,
     Decision,
     Reveal,
@@ -31,7 +33,8 @@ public:
 
     void startGame();
     void startNextRound();
-    void submitMemoryCards(const std::vector<int>& selected);
+    void submitMemoryCards(std::vector<int>& selected);
+    void submitPaint();
     void makeDecision(int guessedIndex);
     void finalGuess(int playerId);
     void assignRoles();
@@ -43,6 +46,7 @@ public:
     const Player& getDecidingPlayer() const;
     std::vector<int> getCurrentIdeaWordOptions() const;
     QString getCurrentIdeaText() const;
+    QMap<QString, int> getCurrentWords() { return currentWords; }
 
     bool isGameOver() const;
 
@@ -60,7 +64,7 @@ signals:
 
 private:
     void rotateRoles();
-    void checkGameOver();
+    bool checkGameOver();
     void cleanupRound();
 
 private:
@@ -70,6 +74,7 @@ private:
     int roundNumber;
 
     int currentIdeaId;
+    QMap<QString, int> currentWords;
     QString currentIdeaText;
     int ideaWordIndex;
 

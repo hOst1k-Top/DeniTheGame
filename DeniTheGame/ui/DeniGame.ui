@@ -151,18 +151,21 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="cardLayout">
+     <property name="spacing">
+      <number>3</number>
+     </property>
      <item>
       <widget class="ClickableCard" name="label_3">
        <property name="minimumSize">
         <size>
-         <width>256</width>
+         <width>240</width>
          <height>387</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>387</width>
-         <height>16777215</height>
+         <width>240</width>
+         <height>387</height>
         </size>
        </property>
        <property name="text">
@@ -174,14 +177,14 @@
       <widget class="ClickableCard" name="label_4">
        <property name="minimumSize">
         <size>
-         <width>256</width>
+         <width>240</width>
          <height>387</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>387</width>
-         <height>16777215</height>
+         <width>240</width>
+         <height>387</height>
         </size>
        </property>
        <property name="text">
@@ -193,14 +196,14 @@
       <widget class="ClickableCard" name="label_5">
        <property name="minimumSize">
         <size>
-         <width>256</width>
+         <width>240</width>
          <height>387</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>387</width>
-         <height>16777215</height>
+         <width>240</width>
+         <height>387</height>
         </size>
        </property>
        <property name="text">
@@ -212,14 +215,14 @@
       <widget class="ClickableCard" name="label_6">
        <property name="minimumSize">
         <size>
-         <width>256</width>
+         <width>240</width>
          <height>387</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>387</width>
-         <height>16777215</height>
+         <width>240</width>
+         <height>387</height>
         </size>
        </property>
        <property name="text">
@@ -231,14 +234,14 @@
       <widget class="ClickableCard" name="label_9">
        <property name="minimumSize">
         <size>
-         <width>256</width>
+         <width>240</width>
          <height>387</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>387</width>
-         <height>16777215</height>
+         <width>240</width>
+         <height>387</height>
         </size>
        </property>
        <property name="text">
@@ -250,14 +253,14 @@
       <widget class="ClickableCard" name="label_7">
        <property name="minimumSize">
         <size>
-         <width>256</width>
+         <width>240</width>
          <height>387</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>387</width>
-         <height>16777215</height>
+         <width>240</width>
+         <height>387</height>
         </size>
        </property>
        <property name="text">
@@ -269,14 +272,14 @@
       <widget class="ClickableCard" name="label_8">
        <property name="minimumSize">
         <size>
-         <width>256</width>
+         <width>240</width>
          <height>387</height>
         </size>
        </property>
        <property name="maximumSize">
         <size>
-         <width>387</width>
-         <height>16777215</height>
+         <width>240</width>
+         <height>387</height>
         </size>
        </property>
        <property name="text">
@@ -289,7 +292,7 @@
    <item>
     <widget class="QPushButton" name="pushButton">
      <property name="text">
-      <string>Next step</string>
+      <string>Start Game</string>
      </property>
     </widget>
    </item>

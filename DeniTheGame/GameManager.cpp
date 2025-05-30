@@ -40,7 +40,6 @@ void GameManager::startGame()
         QMessageBox::information(nullptr, tr("Role"), roleText);
     }
 
-    rotateRoles();
     emit gameStarted();
     startNextRound();
 }
@@ -60,6 +59,7 @@ void GameManager::rotateRoles()
 void GameManager::startNextRound()
 {
     if (phase == GamePhase::GameOver) return;
+    currentWords.clear();
 
     currentIdeaId = dealer.takeIdea();
     QSqlQuery ideaGet(DBProvider::getInstance()->getDB());
@@ -76,27 +76,57 @@ void GameManager::startNextRound()
         ideaWordIndex = ideaGet.value(0).toInt();
     }
 
+    QSqlQuery allWordsGet(DBProvider::getInstance()->getDB());
+    allWordsGet.prepare("SELECT word,wordindex FROM Ideas WHERE ideaid = :id");
+    allWordsGet.bindValue(":id", currentIdeaId);
+    if (!allWordsGet.exec())
+    {
+        QMessageBox::warning(nullptr, tr("Database Error"), allWordsGet.lastError().text());
+        return;
+    }
+    while (allWordsGet.next())
+    {
+        currentWords.insert(allWordsGet.value(0).toString(), allWordsGet.value(1).toInt());
+    }
+
+    rotateRoles();
     players[activePlayerId].currentHend = dealer.takeMemory();
 
     ++roundNumber;
+    QMessageBox::information(nullptr, tr("Round %1: Players Role").arg(roundNumber), tr("Active Player: %1\nDeciding Player: %2").arg(players[activePlayerId].name).arg(players[decidingPlayerId].name));
+    QMessageBox::information(nullptr, tr("Active Move"), tr("Time for memory, active player. Other close eys."));
+    QMessageBox::information(nullptr, tr("Picked Word"), QString("%1: %2").arg(ideaWordIndex).arg(currentIdeaText));
     phase = GamePhase::ActiveThinking;
 
     emit roundStarted(roundNumber, currentIdeaId);
     emit phaseChanged(phase);
 }
 
-void GameManager::submitMemoryCards(const std::vector<int>& selected)
+void GameManager::submitMemoryCards(std::vector<int>& selected)
 {
     std::vector<int> toReturn;
+    auto& hand = players[activePlayerId].currentHend;
+    std::sort(selected.begin(), selected.end());
+    std::sort(hand.begin(), hand.end());
 
-    std::ranges::set_difference(players[activePlayerId].currentHend,
+    std::ranges::set_difference(hand,
         selected,
         std::back_inserter(toReturn));
 
     dealer.returnMemory(toReturn);
-    players[activePlayerId].currentHend = selected;
+    players[activePlayerId].currentHend.clear();
 
+    phase = GamePhase::Painting;
+    emit phaseChanged(phase);
+}
+
+void GameManager::submitPaint()
+{
     phase = GamePhase::OtherDiscuss;
+    QTimer::singleShot(SettingsManager::getInstance()->getDiscussTime() * 1000, [&]() {
+        phase = GamePhase::Decision;
+        emit phaseChanged(phase);
+        });
 
     emit phaseChanged(phase);
 }
@@ -104,9 +134,12 @@ void GameManager::submitMemoryCards(const std::vector<int>& selected)
 void GameManager::makeDecision(int guessedIndex)
 {
     bool correct = (guessedIndex == ideaWordIndex);
+    
+    phase = GamePhase::Reveal;
+    emit phaseChanged(phase);
 
     QMessageBox::information(nullptr, tr("Answer"),
-        correct ? tr("Correct answer!") : tr("Wrong answer!"));
+        correct ? tr("Correct answer!") : tr("Wrong answer! Correct answer is %1").arg(currentIdeaText));
 
     if (correct)
     {
@@ -119,29 +152,37 @@ void GameManager::makeDecision(int guessedIndex)
         emit incorrectAnswer();
     }
 
-    checkGameOver();
-    phase = GamePhase::RoundEnd;
-    emit phaseChanged(phase);
-}
-
-void GameManager::checkGameOver()
-{
-    if (correctAnswers >= 6 || incorrectAnswers >= 3) {
-        phase = GamePhase::FinalGuess;
-        QMessageBox::information(nullptr, tr("Final Round"), tr("Final guessing begins."));
-        emit finalRoundStarted();
+    if(!checkGameOver())
+    {
+        phase = GamePhase::RoundEnd;
         emit phaseChanged(phase);
     }
 }
 
+bool GameManager::checkGameOver()
+{
+    if (correctAnswers >= 6 || incorrectAnswers >= 3) {
+        phase = GamePhase::FinalGuess;
+        QMessageBox::information(nullptr, tr("Final Round"), tr("Final guessing begins."));
+        emit phaseChanged(phase);
+        return true;
+    }
+    return false;
+}
+
 void GameManager::finalGuess(int playerId)
 {
+    bool altersWin = false;
     if (players[playerId].role == Role::Dany)
+    {
         QMessageBox::information(nullptr, tr("Result"), tr("Dany is found. Alters win!"));
-    else
-        QMessageBox::information(nullptr, tr("Result"), tr("Wrong guess. Dany wins."));
+        altersWin = true;
+    }
+    else QMessageBox::information(nullptr, tr("Result"), tr("Wrong guess. Dany wins."));
 
+    emit gameFinished(altersWin);
     phase = GamePhase::GameOver;
+    emit phaseChanged(phase);
 }
 
 void GameManager::cleanupRound()

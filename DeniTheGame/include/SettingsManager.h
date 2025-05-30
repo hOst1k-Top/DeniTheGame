@@ -14,13 +14,16 @@ public:
 	static SettingsManager* getInstance();
 	
 public:
-	int getMemoryToPick() { return memoryPick; };
+	int getMemoryToPick() const { return memoryPick; };
 	void setMemoryToPick(int pick) { memoryPick = pick; };
+	int getDiscussTime() const { return discussionTime; };
+	void setDiscussTime(int secs) { discussionTime = secs; }
 	QMap<int, Player> getPlayers() { return players; };
 	void setPlayers(QMap<int, Player> pl) { players = pl; };
 
+
 private:
 	SettingsManager();
-	int memoryPick;
+	int memoryPick, discussionTime;
 	QMap<int, Player> players;
 };
