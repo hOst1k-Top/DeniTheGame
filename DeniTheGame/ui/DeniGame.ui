@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DeniGame</class>
+ <widget class="QWidget" name="DeniGame">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1920</width>
+    <height>1080</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DeniGame</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_4">
+   <item>
+    <layout class="QHBoxLayout" name="mainMenu">
+     <item>
+      <layout class="QVBoxLayout" name="score">
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>75</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resource/DeniTheGame.qrc">:/persons/deni.jpg</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLCDNumber" name="deniScore">
+           <property name="digitCount">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>75</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resource/DeniTheGame.qrc">:/persons/alter.jpg</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLCDNumber" name="alterScore">
+           <property name="digitCount">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="gameView">
+       <item>
+        <widget class="QLabel" name="Title">
+         <property name="font">
+          <font>
+           <pointsize>24</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Deni: Voices In My Head</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGraphicsView" name="MemoryField"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="idea">
+       <item>
+        <widget class="QLabel" name="ideaCard">
+         <property name="minimumSize">
+          <size>
+           <width>256</width>
+           <height>387</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>256</width>
+           <height>387</height>
+          </size>
+         </property>
+         <property name="text">
+          <string notr="true"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="cardLayout">
+     <item>
+      <widget class="ClickableCard" name="label_3">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>387</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>387</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ClickableCard" name="label_4">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>387</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>387</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ClickableCard" name="label_5">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>387</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>387</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ClickableCard" name="label_6">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>387</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>387</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ClickableCard" name="label_9">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>387</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>387</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ClickableCard" name="label_7">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>387</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>387</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="ClickableCard" name="label_8">
+       <property name="minimumSize">
+        <size>
+         <width>256</width>
+         <height>387</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>387</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string notr="true"/>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>Next step</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ClickableCard</class>
+   <extends>QLabel</extends>
+   <header>ClickableCard.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resource/DeniTheGame.qrc"/>
+ </resources>
+ <connections/>
+</ui>
