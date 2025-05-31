@@ -21,6 +21,7 @@ DeniGame::DeniGame(QWidget* parent)
     connect(&manager, &GameManager::memoryCountChanged, this, &DeniGame::updateScore);
     connect(&manager, &GameManager::finalRoundStarted, this, &DeniGame::onFinalRoundStarted);
     connect(&manager, &GameManager::showMessageRequested, this, &DeniGame::onShowMessageRequested);
+    connect(&manager, &GameManager::requestPlayerVote, this, &DeniGame::onRequestPlayerVote);
 
     connect(ui->pushButton, &QAbstractButton::clicked, [&]() {
         GamePhase phase = manager.getPhase();
@@ -62,23 +63,10 @@ DeniGame::DeniGame(QWidget* parent)
         case GamePhase::RoundEnd:
             manager.startNextRound();
             break;
-        case GamePhase::FinalGuess:
-        {
-            QMap<QString, int> players;
-            for (auto player : SettingsManager::getInstance()->getPlayers())
-                players.insert(player.name, player.id);
-            QStringList names = players.keys();
-
-            showSelectionDialog(tr("Deny Picker"), tr("The Deny is:"), names,
-                [this, players](const QString& picked) {
-                    manager.finalGuess(players[picked]);
-                });
-            break;
-        }
         default:
             break;
         }
-    });
+        });
 
     connect(&manager, &GameManager::gameFinished, this, &DeniGame::onGameFinished);
 }
@@ -133,7 +121,8 @@ void DeniGame::onPhaseChanged(GamePhase phase)
         }
         break;
     case GamePhase::FinalGuess:
-        ui->pushButton->setText(tr("The Deny is..."));
+        ui->pushButton->setText(tr("Waiting for votes..."));
+        ui->pushButton->setEnabled(false);
         ui->Title->setText(tr("Final Guessing"));
         if (scene) scene->setInteractionEnabled(false);
         break;
@@ -162,7 +151,7 @@ void DeniGame::onGameFinished(bool altersWin)
                 settings->show();
                 deleteLater();
             }
-    });
+        });
 }
 
 void DeniGame::onShowMessageRequested(const QString& title, const QString& text)
@@ -225,6 +214,21 @@ void DeniGame::processNextMessage()
             }
         );
     }
+}
+
+void DeniGame::onRequestPlayerVote(int currentPlayerId)
+{
+    QStringList playerNames = manager.getPlayerNamesForVoting(currentPlayerId);
+    QMap<QString, int> playerMap = manager.getPlayerMapForVoting(currentPlayerId);
+
+    QString currentPlayerName = manager.getPlayerMapForVoting(-1).key(currentPlayerId);
+    QString message = tr("%1, who do you think is Dany?").arg(currentPlayerName);
+
+    showSelectionDialog(tr("Your Vote"), message, playerNames,
+        [this, currentPlayerId, playerMap](const QString& selectedName) {
+            int suspectedId = playerMap[selectedName];
+            manager.submitPlayerVote(currentPlayerId, suspectedId);
+        });
 }
 
 void DeniGame::resetInterface()

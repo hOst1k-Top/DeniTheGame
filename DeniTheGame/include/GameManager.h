@@ -36,8 +36,7 @@ public:
     void submitMemoryCards(std::vector<int>& selected);
     void submitPaint();
     void makeDecision(int guessedIndex);
-    void finalGuess(int playerId);
-    void assignRoles();
+    void submitPlayerVote(int votingPlayerId, int suspectedDanyId);
 
     GamePhase getPhase() const;
     int getCorrectAnswers() const;
@@ -47,7 +46,10 @@ public:
     const Player& getDecidingPlayer() const;
     std::vector<int> getCurrentIdeaWordOptions() const;
     QString getCurrentIdeaText() const;
-    QMap<QString, int> getCurrentWords() { return currentWords; }
+    const QMap<QString, int>& getCurrentWords() const { return currentWords; }
+
+    QStringList getPlayerNamesForVoting(int excludePlayerId = -1) const;
+    QMap<QString, int> getPlayerMapForVoting(int excludePlayerId = -1) const;
 
     bool isGameOver() const;
 
@@ -64,11 +66,20 @@ signals:
     void gameFinished(bool altersWin);
     void memoryCountChanged();
     void showMessageRequested(const QString& title, const QString& text);
+    void requestPlayerVote(int currentPlayerId);
 
 private:
     void rotateRoles();
     bool checkGameOver();
     void cleanupRound();
+    void assignRoles();
+
+    void startFinalVoting();
+    void startNextPlayerVote();
+    void processFinalVotes();
+    void finalizeSingleCandidate(int candidateId);
+    void handleSplitVoting(const QMap<int, int>& votesCounts);
+    void startFinalCandidateVoting(const QSet<int>& candidates, const QMap<int, int>& votesCounts);
 
 private:
     GamePhase phase;
@@ -83,6 +94,10 @@ private:
 
     int correctAnswers;
     int incorrectAnswers;
+
+    QMap<int, int> finalVotes;
+    QList<int> votingPlayers;
+    int currentVotingPlayerIndex;
 
     std::map<int, Player> players;
 

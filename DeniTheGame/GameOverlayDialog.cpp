@@ -6,7 +6,7 @@ GameOverlayDialog::GameOverlayDialog(QWidget *parent)
 	okButton(new QPushButton(tr("OK"), this)),
 	comboBox(new QComboBox(this)),
 	confirmButton(new QPushButton(tr("Confirm"), this)),
-	cancelButton(new QPushButton(tr("Candel"), this))
+	cancelButton(new QPushButton(tr("Cancel"), this))
 {
     setModal(true);
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);

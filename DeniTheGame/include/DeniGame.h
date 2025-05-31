@@ -38,6 +38,7 @@ private slots:
     void onPhaseChanged(GamePhase phase);
     void onFinalRoundStarted();
     void onGameFinished(bool altersWin);
+    void onRequestPlayerVote(int currentPlayerId);
     void updateScore();
     void onShowMessageRequested(const QString& title, const QString& text);
 
