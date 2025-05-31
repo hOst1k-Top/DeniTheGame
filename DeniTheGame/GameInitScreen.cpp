@@ -1,8 +1,10 @@
 #include "include/GameInitScreen.h"
 
-GameInitScreen::GameInitScreen(QWidget *parent)
+
+GameInitScreen::GameInitScreen(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::GameInitScreenClass())
+    , tempFile(QDir::tempPath() + "/rules_XXXXXX.pdf")
 {
     ui->setupUi(this);
     setFixedHeight(height());
@@ -10,6 +12,26 @@ GameInitScreen::GameInitScreen(QWidget *parent)
     ui->memoryCards->addItem(tr("35 cards"), 35);
     ui->memoryCards->addItem(tr("40 cards"), 40);
     QObject::connect(ui->pCount, &QSpinBox::valueChanged, this, &GameInitScreen::handlePlayerCountChange);
+    QObject::connect(ui->rules, &QAbstractButton::clicked, [this]() {
+        QFile resourceFile(":/docx/rules.pdf");
+
+        if (!resourceFile.open(QIODevice::ReadOnly)) {
+            qWarning() << "Failed to open resource file";
+            return;
+        }
+
+        if (!tempFile.open()) {
+            qWarning() << "Failed to open temp file";
+            return;
+        }
+
+        tempFile.write(resourceFile.readAll());
+
+        QString fileName = tempFile.fileName();
+        QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
+        tempFile.flush();
+        tempFile.setAutoRemove(false);
+    });
     QObject::connect(ui->startGame, &QAbstractButton::clicked, [this]() {
         auto players = getPlayers();
         if (players.isEmpty() || players.size() != ui->pCount->value())
@@ -30,6 +52,7 @@ GameInitScreen::GameInitScreen(QWidget *parent)
 GameInitScreen::~GameInitScreen()
 {
     delete ui;
+    tempFile.remove();
 }
 
 QMap<int, Player> GameInitScreen::getPlayers()

@@ -63,6 +63,7 @@
     </qresource>
     <qresource prefix="/icons">
         <file>icon.png</file>
+        <file>rules.png</file>
     </qresource>
     <qresource prefix="/Idea">
         <file>IdeaCards/1.jpg</file>
@@ -110,5 +111,8 @@
         <file>deni.jpg</file>
         <file>alter.jpg</file>
         <file>remainCards.png</file>
+    </qresource>
+    <qresource prefix="/docx">
+        <file>rules.pdf</file>
     </qresource>
 </RCC>

@@ -1,6 +1,9 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
+#include <QDir>
+#include <QTemporaryFile>
+#include <QDesktopServices>
 #include "SettingsManager.h"
 #include "Player.h"
 #include "DeniGame.h"
@@ -24,4 +27,5 @@ public:
 
 private:
     Ui::GameInitScreenClass *ui;
+    QTemporaryFile tempFile;
 };
