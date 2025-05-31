@@ -1,15 +1,18 @@
 #include "include/DeniGame.h"
 
-DeniGame::DeniGame(QWidget *parent)
-	: QWidget(parent)
-	, ui(new Ui::DeniGame())
+DeniGame::DeniGame(QWidget* parent)
+    : QWidget(parent)
+    , ui(new Ui::DeniGame())
+    , currentOverlay(nullptr)
+    , messageQueue()
 {
-	ui->setupUi(this);
+    ui->setupUi(this);
     scene = new InteractiveGraphicsScene(this);
-    scene->setSceneRect(0, 0, 1000, 800); 
+    scene->setSceneRect(0, 0, 1000, 800);
     ui->MemoryField->setScene(scene);
     ui->MemoryField->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-	showFullScreen();
+    showFullScreen();
+
     connect(&manager, &GameManager::gameStarted, this, &DeniGame::onGameStarted);
     connect(&manager, &GameManager::roundStarted, this, &DeniGame::onRoundStarted);
     connect(&manager, &GameManager::phaseChanged, this, &DeniGame::onPhaseChanged);
@@ -17,6 +20,8 @@ DeniGame::DeniGame(QWidget *parent)
     connect(&manager, &GameManager::incorrectAnswer, this, &DeniGame::updateScore);
     connect(&manager, &GameManager::memoryCountChanged, this, &DeniGame::updateScore);
     connect(&manager, &GameManager::finalRoundStarted, this, &DeniGame::onFinalRoundStarted);
+    connect(&manager, &GameManager::showMessageRequested, this, &DeniGame::onShowMessageRequested);
+
     connect(ui->pushButton, &QAbstractButton::clicked, [&]() {
         GamePhase phase = manager.getPhase();
         switch (phase)
@@ -31,10 +36,8 @@ DeniGame::DeniGame(QWidget *parent)
             {
                 QLayoutItem* item = ui->cardLayout->itemAt(i);
                 if (!item) continue;
-
                 ClickableCard* card = qobject_cast<ClickableCard*>(item->widget());
                 if (!card) continue;
-
                 if (card->getState() == State::Selected) picked.push_back(card->getId());
             }
             manager.submitMemoryCards(picked);
@@ -49,10 +52,11 @@ DeniGame::DeniGame(QWidget *parent)
         {
             auto words = manager.getCurrentWords();
             QStringList items = words.keys();
-            bool ok;
-            QString selected = QInputDialog::getItem(this, tr("Word Selector"), tr("Select easter world:"), items, 0, false, &ok);
-            if (!ok) return;
-            manager.makeDecision(words[selected]);
+
+            showSelectionDialog(tr("Word Selector"), tr("Select easter world:"), items,
+                [this, words](const QString& selected) {
+                    manager.makeDecision(words[selected]);
+                });
             break;
         }
         case GamePhase::RoundEnd:
@@ -61,12 +65,15 @@ DeniGame::DeniGame(QWidget *parent)
         case GamePhase::FinalGuess:
         {
             QMap<QString, int> players;
-            for (auto player : SettingsManager::getInstance()->getPlayers()) players.insert(player.name, player.id);
+            for (auto player : SettingsManager::getInstance()->getPlayers())
+                players.insert(player.name, player.id);
             QStringList names = players.keys();
-            bool ok;
-            QString picked = QInputDialog::getItem(this, tr("Deny Picker"), tr("The Deny is:"), names, 0, false, &ok);
-            if (!ok) return;
-            manager.finalGuess(players[picked]);
+
+            showSelectionDialog(tr("Deny Picker"), tr("The Deny is:"), names,
+                [this, players](const QString& picked) {
+                    manager.finalGuess(players[picked]);
+                });
+            break;
         }
         default:
             break;
@@ -78,13 +85,12 @@ DeniGame::DeniGame(QWidget *parent)
 
 DeniGame::~DeniGame()
 {
-	delete ui;
+    delete ui;
 }
 
 void DeniGame::onGameStarted()
 {
     resetInterface();
-    QMessageBox::information(this, tr("Game"), tr("The game has started."));
 }
 
 void DeniGame::onRoundStarted(int round, const int& idea)
@@ -103,25 +109,21 @@ void DeniGame::onPhaseChanged(GamePhase phase)
         ui->pushButton->setEnabled(true);
         if (scene) scene->setInteractionEnabled(false);
         break;
-
     case GamePhase::Painting:
         ui->pushButton->setText(tr("Submit Paint"));
         ui->pushButton->setEnabled(true);
         if (scene) scene->setInteractionEnabled(true);
         break;
-
     case GamePhase::OtherDiscuss:
         ui->pushButton->setText(tr("Waiting..."));
         ui->pushButton->setEnabled(false);
         if (scene) scene->setInteractionEnabled(false);
         break;
-
     case GamePhase::Decision:
         ui->pushButton->setText(tr("Make Decision"));
         ui->pushButton->setEnabled(true);
         if (scene) scene->setInteractionEnabled(false);
         break;
-
     case GamePhase::RoundEnd:
         ui->pushButton->setText(tr("Next Round"));
         ui->pushButton->setEnabled(true);
@@ -130,13 +132,11 @@ void DeniGame::onPhaseChanged(GamePhase phase)
             scene->setInteractionEnabled(false);
         }
         break;
-
     case GamePhase::FinalGuess:
         ui->pushButton->setText(tr("The Deny is..."));
         ui->Title->setText(tr("Final Guessing"));
         if (scene) scene->setInteractionEnabled(false);
         break;
-
     default:
         break;
     }
@@ -144,19 +144,86 @@ void DeniGame::onPhaseChanged(GamePhase phase)
 
 void DeniGame::onFinalRoundStarted()
 {
-
 }
 
 void DeniGame::onGameFinished(bool altersWin)
 {
-    QMessageBox::StandardButton reply = QMessageBox::information(this, tr("Back to menu"), tr("Continue?"), QMessageBox::StandardButton::Retry, QMessageBox::StandardButton::No);
-    if (reply == QMessageBox::No) QApplication::quit();
-    else
-    {
-        GameInitScreen* settings = new GameInitScreen();
-        close();
-        settings->show();
-        deleteLater();
+    QString message = altersWin ? tr("Alters Win!") : tr("Dany Wins!");
+    message += tr("\n\nContinue?");
+
+    showSelectionDialog(tr("Game Over"), message, { tr("New Game"), tr("Exit") },
+        [this](const QString& choice) {
+            if (choice == tr("Exit")) {
+                QApplication::quit();
+            }
+            else {
+                GameInitScreen* settings = new GameInitScreen();
+                close();
+                settings->show();
+                deleteLater();
+            }
+    });
+}
+
+void DeniGame::onShowMessageRequested(const QString& title, const QString& text)
+{
+    MessageInfo info;
+    info.title = title;
+    info.text = text;
+    info.isInfo = true;
+
+    messageQueue.enqueue(info);
+
+    if (!currentOverlay) {
+        processNextMessage();
+    }
+}
+
+void DeniGame::showSelectionDialog(const QString& title, const QString& message,
+    const QStringList& items,
+    std::function<void(const QString&)> onSelected)
+{
+    MessageInfo info;
+    info.title = title;
+    info.text = message;
+    info.isInfo = false;
+    info.items = items;
+    info.selectionCallback = std::move(onSelected);
+
+    messageQueue.enqueue(info);
+
+    if (!currentOverlay) {
+        processNextMessage();
+    }
+}
+
+void DeniGame::processNextMessage()
+{
+    if (messageQueue.isEmpty()) {
+        return;
+    }
+
+    MessageInfo info = messageQueue.dequeue();
+    currentOverlay = new GameOverlayDialog(this);
+
+    if (info.isInfo) {
+        currentOverlay->showInfo(info.text, [this]() {
+            currentOverlay = nullptr;
+            QTimer::singleShot(100, this, &DeniGame::processNextMessage);
+            });
+    }
+    else {
+        currentOverlay->showSelection(info.text, info.items,
+            [this, callback = info.selectionCallback](const QString& selected) {
+                currentOverlay = nullptr;
+                if (callback) callback(selected);
+                QTimer::singleShot(100, this, &DeniGame::processNextMessage);
+            },
+            [this]() {
+                currentOverlay = nullptr;
+                QTimer::singleShot(100, this, &DeniGame::processNextMessage);
+            }
+        );
     }
 }
 
@@ -170,26 +237,22 @@ void DeniGame::resetInterface()
 
 void DeniGame::updateIdeaCard(const int& id)
 {
-    ui->ideaCard->setPixmap(GameManager::getIdeaCardImage(id).scaled(256,387));
+    ui->ideaCard->setPixmap(GameManager::getIdeaCardImage(id).scaled(256, 387));
 }
 
 void DeniGame::displaySubmittedMemoryCards(const std::vector<int>& picked)
 {
     if (!scene) return;
-
     scene->clear();
-
     const int spacing = 30;
     const int cardWidth = 200;
     const int cardHeight = 300;
     int x = 50, y = 50;
-
     for (int id : picked)
     {
         auto* card = new MemoryCardItem(id);
         card->setPos(x, y);
         scene->addItem(card);
-
         x += cardWidth + spacing;
         if (x + cardWidth > scene->width()) {
             x = 50;
@@ -218,7 +281,7 @@ void DeniGame::updateMemoryField()
             label->setId(cards[index]);
             label->setInteraction(true);
         }
-        else 
+        else
         {
             label->clear();
             label->setInteraction(false);

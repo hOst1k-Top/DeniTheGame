@@ -32,6 +32,7 @@ set(HEADERS_FILES
     include/ClickableCard.h
     include/MemoryCardItem.h
     include/InteractiveGraphicsScene.h
+    include/GameOverlayDialog.h
 )
 
 set(PROJECT_SOURCES
@@ -46,6 +47,7 @@ set(PROJECT_SOURCES
     ClickableCard.cpp
     MemoryCardItem.cpp
     InteractiveGraphicsScene.cpp
+    GameOverlayDialog.cpp
 )
 
 set(UI_FILES

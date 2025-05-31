@@ -23,8 +23,7 @@ void GameManager::startGame()
 {
     assignRoles();
     for (auto& [_, player] : players) {
-        QMessageBox::information(nullptr, tr("Game Start"),
-            tr("Player %1 see the screen. Other close eyes.").arg(player.name));
+        emit showMessageRequested(tr("Game Start"), tr("Player %1 see the screen. Other close eyes.").arg(player.name));
 
         QString roleText;
         switch (player.role) {
@@ -38,7 +37,7 @@ void GameManager::startGame()
             roleText = tr("Unknown role"); 
             break;
         }
-        QMessageBox::information(nullptr, tr("Role"), roleText);
+        emit showMessageRequested(tr("Role"), roleText);
     }
 
     emit gameStarted();
@@ -68,7 +67,7 @@ void GameManager::startNextRound()
     ideaGet.bindValue(":id", currentIdeaId);
     if (!ideaGet.exec())
     {
-        QMessageBox::warning(nullptr, tr("Database Error"), ideaGet.lastError().text());
+        emit showMessageRequested(tr("Database Error"), ideaGet.lastError().text());
         return;
     }
     if(ideaGet.first())
@@ -82,7 +81,7 @@ void GameManager::startNextRound()
     allWordsGet.bindValue(":id", currentIdeaId);
     if (!allWordsGet.exec())
     {
-        QMessageBox::warning(nullptr, tr("Database Error"), allWordsGet.lastError().text());
+        emit showMessageRequested(tr("Database Error"), allWordsGet.lastError().text());
         return;
     }
     while (allWordsGet.next())
@@ -95,9 +94,9 @@ void GameManager::startNextRound()
     emit memoryCountChanged();
 
     ++roundNumber;
-    QMessageBox::information(nullptr, tr("Round %1: Players Role").arg(roundNumber), tr("Active Player: %1\nDeciding Player: %2").arg(players[activePlayerId].name).arg(players[decidingPlayerId].name));
-    QMessageBox::information(nullptr, tr("Active Move"), tr("Time for memory, active player. Other close eys."));
-    QMessageBox::information(nullptr, tr("Picked Word"), QString("%1: %2").arg(ideaWordIndex).arg(currentIdeaText));
+    emit showMessageRequested(tr("Round %1: Players Role").arg(roundNumber), tr("Active Player: %1\nDeciding Player: %2").arg(players[activePlayerId].name).arg(players[decidingPlayerId].name));
+    emit showMessageRequested(tr("Active Move"), tr("Time for memory, active player. Other close eys."));
+    emit showMessageRequested(tr("Picked Word"), QString("%1: %2").arg(ideaWordIndex).arg(currentIdeaText));
     phase = GamePhase::ActiveThinking;
 
     emit roundStarted(roundNumber, currentIdeaId);
@@ -141,8 +140,7 @@ void GameManager::makeDecision(int guessedIndex)
     phase = GamePhase::Reveal;
     emit phaseChanged(phase);
 
-    QMessageBox::information(nullptr, tr("Answer"),
-        correct ? tr("Correct answer!") : tr("Wrong answer! Correct answer is %1").arg(currentIdeaText));
+    emit showMessageRequested(tr("Answer"), correct ? tr("Correct answer!") : tr("Wrong answer! Correct answer is %1").arg(currentIdeaText));
 
     if (correct)
     {
@@ -166,7 +164,7 @@ bool GameManager::checkGameOver()
 {
     if (correctAnswers >= 6 || incorrectAnswers >= 3) {
         phase = GamePhase::FinalGuess;
-        QMessageBox::information(nullptr, tr("Final Round"), tr("Final guessing begins."));
+        emit showMessageRequested(tr("Final Round"), tr("Final guessing begins."));
         emit phaseChanged(phase);
         return true;
     }
@@ -178,10 +176,10 @@ void GameManager::finalGuess(int playerId)
     bool altersWin = false;
     if (players[playerId].role == Role::Dany)
     {
-        QMessageBox::information(nullptr, tr("Result"), tr("Dany is found. Alters win!"));
+        emit showMessageRequested(tr("Result"), tr("Dany is found. Alters win!"));
         altersWin = true;
     }
-    else QMessageBox::information(nullptr, tr("Result"), tr("Wrong guess. Dany wins."));
+    else emit showMessageRequested(tr("Result"), tr("Wrong guess. Dany wins."));
 
     emit gameFinished(altersWin);
     phase = GamePhase::GameOver;

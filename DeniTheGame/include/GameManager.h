@@ -63,6 +63,7 @@ signals:
     void finalRoundStarted();
     void gameFinished(bool altersWin);
     void memoryCountChanged();
+    void showMessageRequested(const QString& title, const QString& text);
 
 private:
     void rotateRoles();
