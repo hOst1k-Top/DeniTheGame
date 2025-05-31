@@ -11,6 +11,7 @@ GameManager::GameManager(QObject* parent):
     rng(std::random_device{}())
 {
 	dealer.InitCards();
+    emit memoryCountChanged();
 	auto temp = SettingsManager::getInstance()->getPlayers();
 	for (auto key : temp.keys())
 	{
@@ -91,6 +92,7 @@ void GameManager::startNextRound()
 
     rotateRoles();
     players[activePlayerId].currentHend = dealer.takeMemory();
+    emit memoryCountChanged();
 
     ++roundNumber;
     QMessageBox::information(nullptr, tr("Round %1: Players Role").arg(roundNumber), tr("Active Player: %1\nDeciding Player: %2").arg(players[activePlayerId].name).arg(players[decidingPlayerId].name));
@@ -114,6 +116,7 @@ void GameManager::submitMemoryCards(std::vector<int>& selected)
         std::back_inserter(toReturn));
 
     dealer.returnMemory(toReturn);
+    emit memoryCountChanged();
     players[activePlayerId].currentHend.clear();
 
     phase = GamePhase::Painting;
@@ -210,6 +213,7 @@ void GameManager::assignRoles()
 GamePhase GameManager::getPhase() const { return phase; }
 int GameManager::getCorrectAnswers() const { return correctAnswers; }
 int GameManager::getIncorrectAnswers() const { return incorrectAnswers; }
+int GameManager::getRemainCards() { return dealer.getMemory(); }
 const Player& GameManager::getActivePlayer() const { return players.at(activePlayerId); }
 const Player& GameManager::getDecidingPlayer() const { return players.at(decidingPlayerId); }
 std::vector<int> GameManager::getCurrentIdeaWordOptions() const { return { 1, 2, 3, 4, 5 }; }

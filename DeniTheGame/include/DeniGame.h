@@ -7,6 +7,8 @@
 #include "GameManager.h"
 #include "ClickableCard.h"
 #include "GameInitScreen.h"
+#include "MemoryCardItem.h"
+#include "InteractiveGraphicsScene.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class DeniGame; };
@@ -31,8 +33,10 @@ private slots:
 private:
 	Ui::DeniGame *ui;
 	GameManager manager;
+    InteractiveGraphicsScene* scene;
 
     void resetInterface();
     void updateIdeaCard(const int& id);
+    void displaySubmittedMemoryCards(const std::vector<int>& picked);
     void updateMemoryField();
 };

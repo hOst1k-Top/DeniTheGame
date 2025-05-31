@@ -9,103 +9,109 @@
         <translation>Дени: Голоса в голове</translation>
     </message>
     <message>
-        <location filename="../ui/DeniGame.ui" line="102"/>
-        <location filename="../DeniGame.cpp" line="158"/>
+        <location filename="../ui/DeniGame.ui" line="128"/>
+        <source>Deni</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeniGame.cpp" line="167"/>
         <source>Deni: Voices In My Head</source>
         <translation>Дени: Голоса в голове</translation>
     </message>
     <message>
-        <location filename="../ui/DeniGame.ui" line="295"/>
+        <location filename="../ui/DeniGame.ui" line="321"/>
         <source>Start Game</source>
         <translation>Начать игру</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="47"/>
+        <location filename="../DeniGame.cpp" line="53"/>
         <source>Word Selector</source>
         <translation>Выбор слова</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="47"/>
+        <location filename="../DeniGame.cpp" line="53"/>
         <source>Select easter world:</source>
         <translation>Выберите загаданное слово:</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="61"/>
+        <location filename="../DeniGame.cpp" line="67"/>
         <source>Deny Picker</source>
         <translation>Выбор Дени</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="61"/>
+        <location filename="../DeniGame.cpp" line="67"/>
         <source>The Deny is:</source>
         <translation>Дени это:</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="81"/>
+        <location filename="../DeniGame.cpp" line="87"/>
         <source>Game</source>
         <translation>Игра</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="81"/>
+        <location filename="../DeniGame.cpp" line="87"/>
         <source>The game has started.</source>
         <translation>Игра началась.</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="86"/>
+        <location filename="../DeniGame.cpp" line="92"/>
         <source>Round %1</source>
         <translation>Раунд %1</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="96"/>
+        <location filename="../DeniGame.cpp" line="102"/>
         <source>Submit</source>
         <translation>Подтвердить</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="101"/>
+        <location filename="../DeniGame.cpp" line="108"/>
         <source>Submit Paint</source>
         <translation>Подвердить рисунок</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="106"/>
+        <location filename="../DeniGame.cpp" line="114"/>
         <source>Waiting...</source>
         <translation>Ожидание...</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="111"/>
+        <location filename="../DeniGame.cpp" line="120"/>
         <source>Make Decision</source>
         <translation>Сделать Выбор</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="122"/>
+        <location filename="../DeniGame.cpp" line="126"/>
+        <source>Next Round</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeniGame.cpp" line="135"/>
         <source>The Deny is...</source>
         <translation>Дени это...</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="143"/>
+        <location filename="../DeniGame.cpp" line="152"/>
         <source>Back to menu</source>
         <translation>Вернуться в меню</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="143"/>
+        <location filename="../DeniGame.cpp" line="152"/>
         <source>Continue?</source>
         <translation>Продолжим?</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="138"/>
         <source>Alters win!</source>
-        <translation>Победили Альтернативные личности!</translation>
+        <translation type="vanished">Победили Альтернативные личности!</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="139"/>
         <source>Dany wins!</source>
-        <translation>Победил Дени!</translation>
+        <translation type="vanished">Победил Дени!</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="141"/>
         <source>Game Over</source>
-        <translation>Игра окончена</translation>
+        <translation type="vanished">Игра окончена</translation>
     </message>
     <message>
-        <location filename="../DeniGame.cpp" line="123"/>
+        <location filename="../DeniGame.cpp" line="136"/>
         <source>Final Guessing</source>
         <translation>Решающий раунд</translation>
     </message>
@@ -219,106 +225,106 @@
 <context>
     <name>GameManager</name>
     <message>
-        <location filename="../GameManager.cpp" line="25"/>
+        <location filename="../GameManager.cpp" line="26"/>
         <source>Game Start</source>
         <translation>Начало игры</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="26"/>
+        <location filename="../GameManager.cpp" line="27"/>
         <source>Player %1 see the screen. Other close eyes.</source>
         <translation>Игрок %1 смотри на экран. Остальные закройте глаза.</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="31"/>
+        <location filename="../GameManager.cpp" line="32"/>
         <source>You are Dany</source>
         <translation>Ты – Дени</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="34"/>
+        <location filename="../GameManager.cpp" line="35"/>
         <source>You are Alter personality</source>
         <translation>Ты – Альтернативная личность</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="37"/>
+        <location filename="../GameManager.cpp" line="38"/>
         <source>Unknown role</source>
         <translation>Неизвестная роль</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="40"/>
+        <location filename="../GameManager.cpp" line="41"/>
         <source>Role</source>
         <translation>Роль</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="70"/>
-        <location filename="../GameManager.cpp" line="84"/>
+        <location filename="../GameManager.cpp" line="71"/>
+        <location filename="../GameManager.cpp" line="85"/>
         <source>Database Error</source>
         <translation>Ошибка баз данных</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="96"/>
+        <location filename="../GameManager.cpp" line="98"/>
         <source>Round %1: Players Role</source>
         <translation>Раунд %1: Роли игроков</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="96"/>
+        <location filename="../GameManager.cpp" line="98"/>
         <source>Active Player: %1
 Deciding Player: %2</source>
         <translation>Активный игрок: %1
 Решающий игрок: %2</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="97"/>
+        <location filename="../GameManager.cpp" line="99"/>
         <source>Active Move</source>
         <translation>Ход Активного Игрока</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="97"/>
+        <location filename="../GameManager.cpp" line="99"/>
         <source>Time for memory, active player. Other close eys.</source>
         <translation>Время для запоминаний, активный игрок. Остальные закройте глаза.</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="98"/>
+        <location filename="../GameManager.cpp" line="100"/>
         <source>Picked Word</source>
         <translation>Выбранное слово</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="141"/>
+        <location filename="../GameManager.cpp" line="144"/>
         <source>Answer</source>
         <translation>Ответ</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="142"/>
+        <location filename="../GameManager.cpp" line="145"/>
         <source>Correct answer!</source>
         <translation>Правильный ответ!</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="142"/>
+        <location filename="../GameManager.cpp" line="145"/>
         <source>Wrong answer! Correct answer is %1</source>
         <translation>Неправильный ответ! Правильный ответ это %1</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="166"/>
+        <location filename="../GameManager.cpp" line="169"/>
         <source>Final Round</source>
         <translation>Финальный раунд</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="166"/>
+        <location filename="../GameManager.cpp" line="169"/>
         <source>Final guessing begins.</source>
         <translation>Начинается финальный раунд.</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="178"/>
         <location filename="../GameManager.cpp" line="181"/>
+        <location filename="../GameManager.cpp" line="184"/>
         <source>Result</source>
         <translation>Результат</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="178"/>
+        <location filename="../GameManager.cpp" line="181"/>
         <source>Dany is found. Alters win!</source>
         <translation>Дени найден. Альтернативные личности выйграли!</translation>
     </message>
     <message>
-        <location filename="../GameManager.cpp" line="181"/>
+        <location filename="../GameManager.cpp" line="184"/>
         <source>Wrong guess. Dany wins.</source>
         <translation>Неправильный ответ. Дени выйграл.</translation>
     </message>

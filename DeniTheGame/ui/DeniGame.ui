@@ -21,7 +21,7 @@
        <item>
         <layout class="QFormLayout" name="formLayout">
          <item row="0" column="0">
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="deniIcon">
            <property name="maximumSize">
             <size>
              <width>50</width>
@@ -47,7 +47,7 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="alterIcon">
            <property name="maximumSize">
             <size>
              <width>50</width>
@@ -69,6 +69,32 @@
           <widget class="QLCDNumber" name="alterScore">
            <property name="digitCount">
             <number>1</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="remainIcon">
+           <property name="maximumSize">
+            <size>
+             <width>50</width>
+             <height>75</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap resource="../resource/DeniTheGame.qrc">:/persons/remainCards.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLCDNumber" name="remain">
+           <property name="digitCount">
+            <number>2</number>
            </property>
           </widget>
          </item>
@@ -99,7 +125,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Deni: Voices In My Head</string>
+          <string>Deni</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignmentFlag::AlignCenter</set>

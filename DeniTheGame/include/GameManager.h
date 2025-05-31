@@ -42,6 +42,7 @@ public:
     GamePhase getPhase() const;
     int getCorrectAnswers() const;
     int getIncorrectAnswers() const;
+    int getRemainCards();
     const Player& getActivePlayer() const;
     const Player& getDecidingPlayer() const;
     std::vector<int> getCurrentIdeaWordOptions() const;
@@ -61,6 +62,7 @@ signals:
     void incorrectAnswer();
     void finalRoundStarted();
     void gameFinished(bool altersWin);
+    void memoryCountChanged();
 
 private:
     void rotateRoles();

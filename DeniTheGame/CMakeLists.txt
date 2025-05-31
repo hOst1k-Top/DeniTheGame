@@ -30,6 +30,8 @@ set(HEADERS_FILES
     include/GameManager.h
     include/DeniGame.h
     include/ClickableCard.h
+    include/MemoryCardItem.h
+    include/InteractiveGraphicsScene.h
 )
 
 set(PROJECT_SOURCES
@@ -42,6 +44,8 @@ set(PROJECT_SOURCES
     GameManager.cpp
     DeniGame.cpp
     ClickableCard.cpp
+    MemoryCardItem.cpp
+    InteractiveGraphicsScene.cpp
 )
 
 set(UI_FILES

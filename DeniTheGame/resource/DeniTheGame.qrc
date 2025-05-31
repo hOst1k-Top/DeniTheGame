@@ -109,5 +109,6 @@
     <qresource prefix="/persons">
         <file>deni.jpg</file>
         <file>alter.jpg</file>
+        <file>remainCards.png</file>
     </qresource>
 </RCC>

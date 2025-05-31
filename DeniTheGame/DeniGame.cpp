@@ -5,12 +5,17 @@ DeniGame::DeniGame(QWidget *parent)
 	, ui(new Ui::DeniGame())
 {
 	ui->setupUi(this);
+    scene = new InteractiveGraphicsScene(this);
+    scene->setSceneRect(0, 0, 1000, 800); 
+    ui->MemoryField->setScene(scene);
+    ui->MemoryField->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 	showFullScreen();
     connect(&manager, &GameManager::gameStarted, this, &DeniGame::onGameStarted);
     connect(&manager, &GameManager::roundStarted, this, &DeniGame::onRoundStarted);
     connect(&manager, &GameManager::phaseChanged, this, &DeniGame::onPhaseChanged);
     connect(&manager, &GameManager::correctAnswer, this, &DeniGame::updateScore);
     connect(&manager, &GameManager::incorrectAnswer, this, &DeniGame::updateScore);
+    connect(&manager, &GameManager::memoryCountChanged, this, &DeniGame::updateScore);
     connect(&manager, &GameManager::finalRoundStarted, this, &DeniGame::onFinalRoundStarted);
     connect(ui->pushButton, &QAbstractButton::clicked, [&]() {
         GamePhase phase = manager.getPhase();
@@ -34,6 +39,7 @@ DeniGame::DeniGame(QWidget *parent)
             }
             manager.submitMemoryCards(picked);
             updateMemoryField();
+            displaySubmittedMemoryCards(picked);
             break;
         }
         case GamePhase::Painting:
@@ -91,38 +97,46 @@ void DeniGame::onRoundStarted(int round, const int& idea)
 void DeniGame::onPhaseChanged(GamePhase phase)
 {
     switch (phase)
-    {;
+    {
     case GamePhase::ActiveThinking:
         ui->pushButton->setText(tr("Submit"));
         ui->pushButton->setEnabled(true);
-        ui->MemoryField->setEnabled(false);
+        if (scene) scene->setInteractionEnabled(false);
         break;
+
     case GamePhase::Painting:
         ui->pushButton->setText(tr("Submit Paint"));
         ui->pushButton->setEnabled(true);
-        ui->MemoryField->setEnabled(true);
+        if (scene) scene->setInteractionEnabled(true);
         break;
+
     case GamePhase::OtherDiscuss:
         ui->pushButton->setText(tr("Waiting..."));
         ui->pushButton->setEnabled(false);
-        ui->MemoryField->setEnabled(false);
+        if (scene) scene->setInteractionEnabled(false);
         break;
+
     case GamePhase::Decision:
         ui->pushButton->setText(tr("Make Decision"));
         ui->pushButton->setEnabled(true);
-        ui->MemoryField->setEnabled(false);
+        if (scene) scene->setInteractionEnabled(false);
         break;
+
     case GamePhase::RoundEnd:
-        ui->pushButton->setText("Next Round");
+        ui->pushButton->setText(tr("Next Round"));
         ui->pushButton->setEnabled(true);
-        ui->MemoryField->setEnabled(false);
+        if (scene) {
+            scene->clear();
+            scene->setInteractionEnabled(false);
+        }
         break;
+
     case GamePhase::FinalGuess:
-    {
         ui->pushButton->setText(tr("The Deny is..."));
         ui->Title->setText(tr("Final Guessing"));
+        if (scene) scene->setInteractionEnabled(false);
         break;
-    }
+
     default:
         break;
     }
@@ -130,16 +144,11 @@ void DeniGame::onPhaseChanged(GamePhase phase)
 
 void DeniGame::onFinalRoundStarted()
 {
+
 }
 
 void DeniGame::onGameFinished(bool altersWin)
 {
-    QString resultText = altersWin
-        ? tr("Alters win!")
-        : tr("Dany wins!");
-
-    QMessageBox::information(this, tr("Game Over"), resultText);
-    
     QMessageBox::StandardButton reply = QMessageBox::information(this, tr("Back to menu"), tr("Continue?"), QMessageBox::StandardButton::Retry, QMessageBox::StandardButton::No);
     if (reply == QMessageBox::No) QApplication::quit();
     else
@@ -157,7 +166,6 @@ void DeniGame::resetInterface()
     ui->alterScore->display(0);
     ui->Title->setText(tr("Deni: Voices In My Head"));
     ui->ideaCard->clear();
-    // Очистка MemoryField, карточек и прочего
 }
 
 void DeniGame::updateIdeaCard(const int& id)
@@ -165,10 +173,36 @@ void DeniGame::updateIdeaCard(const int& id)
     ui->ideaCard->setPixmap(GameManager::getIdeaCardImage(id).scaled(256,387));
 }
 
+void DeniGame::displaySubmittedMemoryCards(const std::vector<int>& picked)
+{
+    if (!scene) return;
+
+    scene->clear();
+
+    const int spacing = 30;
+    const int cardWidth = 200;
+    const int cardHeight = 300;
+    int x = 50, y = 50;
+
+    for (int id : picked)
+    {
+        auto* card = new MemoryCardItem(id);
+        card->setPos(x, y);
+        scene->addItem(card);
+
+        x += cardWidth + spacing;
+        if (x + cardWidth > scene->width()) {
+            x = 50;
+            y += cardHeight + spacing;
+        }
+    }
+}
+
 void DeniGame::updateScore()
 {
     ui->alterScore->display(manager.getCorrectAnswers());
     ui->deniScore->display(manager.getIncorrectAnswers());
+    ui->remain->display(manager.getRemainCards());
 }
 
 void DeniGame::updateMemoryField()

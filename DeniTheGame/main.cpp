@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     if (!translator.load(translationFile))
     {
         qWarning() << "Translation Error";
-        return;
+        return 1;
     }
     a.installTranslator(&translator);
     GameInitScreen w;

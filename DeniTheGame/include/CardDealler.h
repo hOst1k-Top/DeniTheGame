@@ -18,6 +18,7 @@ public:
 	int takeIdea();
 	std::vector<int> takeMemory();
 	void returnMemory(std::vector<int> toReturn);
+	int getMemory() { return memory.size(); }
 
 private:
 	const int MemoryCount = 60, IdeaCount = 37;
