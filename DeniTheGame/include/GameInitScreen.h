@@ -27,5 +27,4 @@ public:
 
 private:
     Ui::GameInitScreenClass *ui;
-    QTemporaryFile tempFile;
 };

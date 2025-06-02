@@ -4,7 +4,6 @@
 GameInitScreen::GameInitScreen(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::GameInitScreenClass())
-    , tempFile(QDir::tempPath() + "/rules_XXXXXX.pdf")
 {
     ui->setupUi(this);
     setFixedHeight(height());
@@ -20,17 +19,19 @@ GameInitScreen::GameInitScreen(QWidget* parent)
             return;
         }
 
+        QTemporaryFile tempFile(QDir::tempPath() + "/rules_XXXXXX.pdf");
         if (!tempFile.open()) {
             qWarning() << "Failed to open temp file";
             return;
         }
 
         tempFile.write(resourceFile.readAll());
+        tempFile.flush();
+        tempFile.setAutoRemove(false);
 
         QString fileName = tempFile.fileName();
         QDesktopServices::openUrl(QUrl::fromLocalFile(fileName));
-        tempFile.flush();
-        tempFile.setAutoRemove(false);
+        
     });
     QObject::connect(ui->startGame, &QAbstractButton::clicked, [this]() {
         auto players = getPlayers();
@@ -52,7 +53,6 @@ GameInitScreen::GameInitScreen(QWidget* parent)
 GameInitScreen::~GameInitScreen()
 {
     delete ui;
-    tempFile.remove();
 }
 
 QMap<int, Player> GameInitScreen::getPlayers()

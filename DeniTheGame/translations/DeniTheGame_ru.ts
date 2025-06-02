@@ -122,27 +122,27 @@ Continue?</source>
 <context>
     <name>GameInitScreen</name>
     <message>
-        <location filename="../GameInitScreen.cpp" line="11"/>
+        <location filename="../GameInitScreen.cpp" line="10"/>
         <source>30 cards</source>
         <translation>30 карт</translation>
     </message>
     <message>
-        <location filename="../GameInitScreen.cpp" line="12"/>
+        <location filename="../GameInitScreen.cpp" line="11"/>
         <source>35 cards</source>
         <translation>35 карт</translation>
     </message>
     <message>
-        <location filename="../GameInitScreen.cpp" line="13"/>
+        <location filename="../GameInitScreen.cpp" line="12"/>
         <source>40 cards</source>
         <translation>40 карт</translation>
     </message>
     <message>
-        <location filename="../GameInitScreen.cpp" line="39"/>
+        <location filename="../GameInitScreen.cpp" line="40"/>
         <source>Error!</source>
         <translation>Ошибка!</translation>
     </message>
     <message>
-        <location filename="../GameInitScreen.cpp" line="39"/>
+        <location filename="../GameInitScreen.cpp" line="40"/>
         <source>Player Names is not selected</source>
         <translation>Выбраны не все имена игроков</translation>
     </message>
